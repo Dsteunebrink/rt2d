@@ -1,7 +1,7 @@
 /**
  * This class describes MyScene behavior.
  *
- * Copyright 2015 Your Name <you@yourhost.com>
+ * Copyright 2017 Dani Steunebrink <danisteunebrink@live.nl>
  */
 
 #include <fstream>
@@ -16,26 +16,34 @@ MyScene::MyScene() : Scene()
 
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
-	myentity = new MyEntity();
-	myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
+	player = new Player();
+	//myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
+	player->scale = Point(2.0f, 2.0f);
 
+
+	this->addSprite("assets/background_gray.tga");
+	this->addSprite("assets/background.tga");
 	// create the scene 'tree'
 	// add myentity to this Scene as a child.
-	this->addChild(myentity);
+	this->addChild(player);
 }
 
 
 MyScene::~MyScene()
 {
 	// deconstruct and delete the Tree
-	this->removeChild(myentity);
+	this->removeChild(player);
 
 	// delete myentity from the heap (there was a 'new' in the constructor)
-	delete myentity;
+	delete player;
 }
 
 void MyScene::update(float deltaTime)
 {
+	camera()->position.x = player->position.x;
+	camera()->position.y = player->position.y;
+
+
 	// ###############################################################
 	// Escape key stops the Scene
 	// ###############################################################
@@ -44,21 +52,11 @@ void MyScene::update(float deltaTime)
 	}
 
 	// ###############################################################
-	// Spacebar scales myentity
-	// ###############################################################
-	if (input()->getKeyDown(KeyCode::Space)) {
-		myentity->scale = Point(0.5f, 0.5f);
-	}
-	if (input()->getKeyUp(KeyCode::Space)) {
-		myentity->scale = Point(1.0f, 1.0f);
-	}
-
-	// ###############################################################
 	// Rotate color
 	// ###############################################################
 	if (t.seconds() > 0.0333f) {
-		RGBAColor color = myentity->sprite()->color;
-		myentity->sprite()->color = Color::rotate(color, 0.01f);
+		RGBAColor color = player->sprite()->color;
+		player->sprite()->color = Color::rotate(color, 0.01f);
 		t.start();
 	}
 }

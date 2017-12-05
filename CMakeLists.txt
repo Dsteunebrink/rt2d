@@ -147,11 +147,23 @@ file(
 ####################################################################
 IF(MAKE_START)
 	add_executable(start
+		start/coin.cpp
+		start/coin.h
+		start/collectable.cpp
+		start/collectable.h
+		start/enemy.cpp
+		start/enemy.h
 		start/main.cpp
-		start/myentity.cpp
-		start/myentity.h
+		start/menu.cpp
+		start/menu.h
 		start/myscene.cpp
 		start/myscene.h
+		start/particle.cpp
+		start/particle.h
+		start/particlesystem.cpp
+		start/particlesystem.h
+		start/player.cpp
+		start/player.h
 	)
 	target_link_libraries(start
 		${ALL_GRAPHICS_LIBS}
