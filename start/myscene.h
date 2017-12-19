@@ -12,6 +12,7 @@
 #include <rt2d/scene.h>
 
 #include "player.h"
+#include "enemy.h"
 
 /// @brief The MyScene class is the Scene implementation.
 class MyScene : public Scene
@@ -31,6 +32,9 @@ public:
 private:
 	/// @brief the rotating square in the middle of the screen
 	Player* player;
+	Enemy* enemy;
+
+	Sprite* background_gray;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 };
