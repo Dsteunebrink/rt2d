@@ -16,18 +16,16 @@ Enemy::Enemy() : Entity()
 	//acceleration = Vector2(0.03, 0.03);
 	//maxSteeringForce = 0.02;
 	//topSpeed = 1;
-
 }
 
 
 Enemy::~Enemy()
 {
-
 }
 
 void Enemy::update(float deltaTime)
 {
-
+	
 	//velocity = Vector2(0, 0);
 	//acceleration = Vector2(0, 0);
 	//Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
@@ -53,7 +51,6 @@ void Enemy::update(float deltaTime)
 	this->rotation.z = velocity.getAngle();
 	this->position += velocity;
 	acceleration = Vector2(0, 0);
-	
 
 	time++;
 
@@ -248,7 +245,6 @@ void Enemy::direction(Point2 checkpoint) {
 	dir = Vector2() - Vector2(Vcheckpoint, location);
 	velocity = Vector2(0, 0);
 	acceleration = Vector2(0, 0);
-
 	
 	//maxSteeringForce = 0.3;
 	//topSpeed = 1;
@@ -273,7 +269,7 @@ void Enemy::direction(Point2 checkpoint) {
 	velocity += acceleration;
 	velocity.limit(1);
 	this->rotation.z = velocity.getAngle();
-	this->position += velocity;
+	//this->position += velocity;
 	acceleration = Vector2(0, 0);
 }
 

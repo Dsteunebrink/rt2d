@@ -29,12 +29,20 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
+	int getindex(int x, int y, int w, int h);
+
 private:
 	/// @brief the rotating square in the middle of the screen
 	Player* player;
 	Enemy* enemy;
 
 	Sprite* background_gray;
+	PixelBuffer* bg_gray;
+
+	int counter;
+	int tcounter;
+	int x;
+	int y;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 };

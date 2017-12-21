@@ -5,6 +5,8 @@ Player::Player() : Entity()
 {
 	this->addSprite("assets/car.tga");
 	this->sprite()->color = RED;
+
+	slowDownCheck = true;
 }
 
 
@@ -17,16 +19,37 @@ void Player::update(float deltaTime)
 {
 	// ###############################################################
 	// Rotate
-	// ###############################################################
+	// ###############################################################w 
 
 	float rotspeed = 3.14f;
 
 	static Vector2 velocity = Vector2((rand() % 100) - 50, (rand() % 100) - 50);
-	static Vector2 maxVelocity = Vector2(-300, -300);
 	static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
 
+	
+	
+	std::cout << velocity << std::endl;
+
+	if (velocityCheck == false) {
+		
+		velocity.limit(500);
+	}
+	if (velocityCheck == true) {
+
+		if (velocity > Vector2(100, 100)) {
+			
+			velocity -= velocity / 50.0f;
+			slowDownCheck = false;
+		}
+		else {
+			slowDownCheck = true;
+			velocity.limit(100);
+		}
+		
+	}
+
 	if (input()->getKey(KeyCode::W)) {
-		if (velocity <= maxVelocity) {
+		if (slowDownCheck == true) {
 			velocity += polar.cartesian() * deltaTime; // thrust
 		}
 	}

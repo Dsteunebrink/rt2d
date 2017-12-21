@@ -24,8 +24,12 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
+	bool velocityCheck;
+
 private:
 	/* add your private declarations */
+
+	bool slowDownCheck;
 };
 
 #endif /* PLAYER_H */

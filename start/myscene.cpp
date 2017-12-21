@@ -28,9 +28,19 @@ MyScene::MyScene() : Scene()
 	//this->addSprite("assets/background_gray.tga");
 	this->addSprite("assets/background.tga");
 	// create the scene 'tree'
-	// add myentity to this Scene as a child.
+	// add player and enemy to this Scene as a child.
 	this->addChild(player);
 	this->addChild(enemy);
+
+	background_gray = new Sprite();
+	background_gray->setupSpriteTGAPixelBuffer("assets/background_gray.tga", 0, 2);
+	bg_gray = background_gray->texture()->pixels();
+
+	counter = 0;
+	tcounter = 0;
+
+	x = 0;
+	y = 0;
 }
 
 
@@ -40,27 +50,31 @@ MyScene::~MyScene()
 	this->removeChild(player);
 	this->removeChild(enemy);
 
-	// delete myentity from the heap (there was a 'new' in the constructor)
+	// delete player and enemy from the heap (there was a 'new' in the constructor)
 	delete player;
 	delete enemy;
 }
 
 void MyScene::update(float deltaTime)
-{
+{ 
+	x = player->position.x + 2048;
+	y = player->position.y + 2048;
 
-	//background_gray = new Sprite();
-	//background_gray->setupSpriteTGAPixelBuffer("assets/heightmap256.tga", 0, 2);
-	//PixelBuffer* bg_gray = background_gray->texture()->pixels();
+	y -= 4096;
+	y *= -1;
+	
+	unsigned char tint = bg_gray->data[getindex(x, y, 4096, 4096) * 4]; // alpha pixel
 
-	//Point2 offset = Point2(-100, -100);
-	//for (int i; ) {
-	//		unsigned char tint = bg_gray->data[+ 3]; // alpha pixel
-	//}
-
-	if (player->position.x) {
-
+	if (tint == 255) { 
+		player->velocityCheck = false;
+	}
+	else {
+		player->velocityCheck = true;
 	}
 
+	counter += bg_gray->bitdepth;
+	tcounter++;
+	
 	camera()->position.x = player->position.x;
 	camera()->position.y = player->position.y;
 
@@ -80,4 +94,12 @@ void MyScene::update(float deltaTime)
 		player->sprite()->color = Color::rotate(color, 0.01f);
 		t.start();
 	}
+}
+
+int MyScene::getindex(int x, int y, int w, int h) {
+	if (x >= 0 && x<w && y >= 0 && y<h) {
+		int i = (y * w) + x;
+		return i;
+	}
+	return -1;
 }

@@ -10,6 +10,7 @@
 #define MYENEMY_H
 
 #include <rt2d/entity.h>
+#include <rt2d/line.h>
 
  /// @brief The Enemy class is the Enemy implementation.
 class Enemy : public Entity {
