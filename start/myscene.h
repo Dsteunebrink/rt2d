@@ -13,6 +13,7 @@
 
 #include "player.h"
 #include "enemy.h"
+#include "coin.h"
 
 /// @brief The MyScene class is the Scene implementation.
 class MyScene : public Scene
@@ -29,20 +30,31 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
+	float dist(Vector2 entity1, Vector2 entity2);
+
 	int getindex(int x, int y, int w, int h);
 
 private:
 	/// @brief the rotating square in the middle of the screen
 	Player* player;
 	Enemy* enemy;
+	Coin* coin;
+
+	Point2 checkpoint;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
+
+	bool addScore;
+
+	bool col;
 
 	int counter;
 	int tcounter;
 	int x;
 	int y;
+
+	int score;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 };

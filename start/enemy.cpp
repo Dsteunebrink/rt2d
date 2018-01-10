@@ -11,11 +11,6 @@ Enemy::Enemy() : Entity()
 	time = int(0);
 
 	direction(Point2(0, -100));
-
-	//velocity = Vector2(0, 0);
-	//acceleration = Vector2(0.03, 0.03);
-	//maxSteeringForce = 0.02;
-	//topSpeed = 1;
 }
 
 
@@ -25,29 +20,6 @@ Enemy::~Enemy()
 
 void Enemy::update(float deltaTime)
 {
-	
-	//velocity = Vector2(0, 0);
-	//acceleration = Vector2(0, 0);
-	//Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
-	//location = Vector2(0, 0);
-	//dir = Vector2() - Vector2(Vcheckpoint, location);
-	//Vector2 desiredVelocity = dir - location;
-	//desiredVelocity.getNormalized();
-	//steering = desiredVelocity - velocity;
-	//steering.limit(maxSteeringForce);
-	//addForce(steering);
-	//velocity += acceleration;
-	//velocity.normalize();
-	//velocity.limit(topSpeed);
-
-	//static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
-
-	//dir * 0.5f;
-	//dir.normalize();
-	//dir *= 40;
-	//acceleration = dir;
-	//velocity += acceleration;
-	//velocity.limit(1);
 	this->rotation.z = velocity.getAngle();
 	this->position += velocity;
 	acceleration = Vector2(0, 0);
@@ -245,22 +217,10 @@ void Enemy::direction(Point2 checkpoint) {
 	dir = Vector2() - Vector2(Vcheckpoint, location);
 	velocity = Vector2(0, 0);
 	acceleration = Vector2(0, 0);
-	
-	//maxSteeringForce = 0.3;
-	//topSpeed = 1;
+
 	Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
 	location = Vector2(0, 0);
 	dir = Vector2() - Vector2(Vcheckpoint, location);
-	//Vector2 desiredVelocity = dir - location;
-	//desiredVelocity.getNormalized();
-	//steering = desiredVelocity - velocity;
-	//steering.limit(maxSteeringForce);
-	//addForce(steering);
-	//velocity += acceleration;
-	//velocity.normalize();
-	//velocity.limit(topSpeed);
-	
-	//static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
 
 	dir * 0.5f;
 	dir.normalize();
@@ -269,7 +229,6 @@ void Enemy::direction(Point2 checkpoint) {
 	velocity += acceleration;
 	velocity.limit(1);
 	this->rotation.z = velocity.getAngle();
-	//this->position += velocity;
 	acceleration = Vector2(0, 0);
 }
 

@@ -700,6 +700,8 @@ Polar_t<T> Polar_t<T>::fromCartesian(const VectorX_t<T>& vec)
 	return *this;
 }
 
+
+
 template <class T>
 Polar_t<T> Polar_t<T>::fromCartesian(T x, T y)
 {

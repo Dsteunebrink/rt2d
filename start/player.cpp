@@ -19,16 +19,12 @@ void Player::update(float deltaTime)
 {
 	// ###############################################################
 	// Rotate
-	// ###############################################################w 
+	// ###############################################################
 
 	float rotspeed = 3.14f;
 
 	static Vector2 velocity = Vector2((rand() % 100) - 50, (rand() % 100) - 50);
 	static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
-
-	
-	
-	std::cout << velocity << std::endl;
 
 	if (velocityCheck == false) {
 		

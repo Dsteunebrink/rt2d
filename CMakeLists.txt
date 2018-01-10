@@ -149,8 +149,6 @@ IF(MAKE_START)
 	add_executable(start
 		start/coin.cpp
 		start/coin.h
-		start/collectable.cpp
-		start/collectable.h
 		start/enemy.cpp
 		start/enemy.h
 		start/main.cpp
