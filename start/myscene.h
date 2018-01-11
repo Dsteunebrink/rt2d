@@ -40,10 +40,15 @@ private:
 	Enemy* enemy;
 	Coin* coin;
 
-	Point2 checkpoint;
-
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
+
+	Point2 checkPoint1;
+	Point2 checkPoint2;
+	Point2 checkPoint3;
+	Point2 checkPoint4;
+
+	float rCircle;
 
 	bool addScore;
 
@@ -55,6 +60,10 @@ private:
 	int y;
 
 	int score;
+
+	void checkpointCol();
+
+	void playerCol();
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 };
