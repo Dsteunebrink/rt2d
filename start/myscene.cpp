@@ -19,10 +19,13 @@ MyScene::MyScene() : Scene()
 	player = new Player();
 	enemy = new Enemy();
 	coin = new Coin();
+	timerText = new Text();
+
 	//myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
-	
+	timerText->scale = Point2(1.0f, 1.0f);
+
 	player->position = Point(-1000, 300);
 	enemy->position = Point(-1000, 300);
 	coin->position = Point(-1400, -500);
@@ -32,9 +35,15 @@ MyScene::MyScene() : Scene()
 	checkPoint3 = Point2(1400, 200);
 	checkPoint4 = Point2(-950, 1220);
 
+	finish = Point2(-1000, 300);
+
+	col = false;
+
 	rCircle = 130.0f;
 
 	addScore = true;
+
+
 
 	this->addSprite("assets/background.tga");
 	// create the scene 'tree'
@@ -42,6 +51,7 @@ MyScene::MyScene() : Scene()
 	this->addChild(player);
 	this->addChild(enemy);
 	this->addChild(coin);
+	this->addChild(timerText);
 
 	background_gray = new Sprite();
 	background_gray->setupSpriteTGAPixelBuffer("assets/background_gray.tga", 0, 2);
@@ -57,21 +67,45 @@ MyScene::MyScene() : Scene()
 
 MyScene::~MyScene()
 {
+
+	int ls = layers.size();
+	for (int i = 0; i < ls; i++) {
+		this->removeChild(layers[i]);
+		delete layers[i];
+		layers[i] = NULL;
+	}
+	layers.clear();
+
+	int ts = text.size();
+	for (int i = 0; i < ts; i++) {
+		this->removeChild(text[i]);
+		delete text[i];
+		text[i] = NULL;
+	}
+	text.clear();
+
 	// deconstruct and delete the Tree
 	this->removeChild(player);
 	this->removeChild(enemy);
 	this->removeChild(coin);
+	this->removeChild(timerText);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
 	delete enemy;
 	delete coin;
+	delete timerText;
 }
 
 void MyScene::update(float deltaTime)
-{ 
+{
+	timerText->position = Point2(camera()->position.x, camera()->position.y);
+	timerText->message(std::to_string(int(t.seconds())));
+
 	checkpointCol();
 	playerCol();
+	checkpointCheck();
+	finished();
 
 	if (coin->deleteCoin == true) {
 		player->sprite()->color = RED;
@@ -85,10 +119,10 @@ void MyScene::update(float deltaTime)
 
 	y -= 4096;
 	y *= -1;
-	
+
 	unsigned char tint = bg_gray->data[getindex(x, y, 4096, 4096) * 4]; // alpha pixel
 
-	if (tint == 255) { 
+	if (tint == 255) {
 		player->velocityCheck = false;
 	}
 	else {
@@ -97,7 +131,7 @@ void MyScene::update(float deltaTime)
 
 	counter += bg_gray->bitdepth;
 	tcounter++;
-	
+
 	camera()->position.x = player->position.x;
 	camera()->position.y = player->position.y;
 
@@ -111,7 +145,7 @@ void MyScene::update(float deltaTime)
 }
 
 int MyScene::getindex(int x, int y, int w, int h) {
-	if (x >= 0 && x<w && y >= 0 && y<h) {
+	if (x >= 0 && x < w && y >= 0 && y < h) {
 		int i = (y * w) + x;
 		return i;
 	}
@@ -119,6 +153,8 @@ int MyScene::getindex(int x, int y, int w, int h) {
 }
 
 void MyScene::playerCol() {
+
+
 
 	if (col == false) {
 		if (player->sprite()->size.y / 4 + coin->sprite()->size.y / 2 > sqrt(Vector3(player->position - coin->position).x * Vector3(player->position - coin->position).x + (Vector3(player->position - coin->position).y * Vector3(player->position - coin->position).y))) { //true if overlapping
@@ -131,7 +167,7 @@ void MyScene::playerCol() {
 	}
 
 	if (player->sprite()->size.y / 4 + enemy->sprite()->size.y / 2 > sqrt(Vector3(player->position - enemy->position).x * Vector3(player->position - enemy->position).x + (Vector3(player->position - enemy->position).y * Vector3(player->position - enemy->position).y))) { //true if overlapping
-		player->sprite()->color = RED;																																																																  //player->sprite()->color = BLUE;
+		player->sprite()->color = BLUE;
 	}
 	else {
 		addScore = true;
@@ -147,6 +183,7 @@ void MyScene::checkpointCol() {
 
 	if (sqrt((dist1.x * dist1.x) + (dist1.y * dist1.y)) <= rCircle) {
 		player->sprite()->color = BLUE;
+		checkPoint1Check = true;
 	}
 	else {
 		player->sprite()->color = RED;
@@ -154,13 +191,71 @@ void MyScene::checkpointCol() {
 
 	if (sqrt((dist2.x * dist2.x) + (dist2.y * dist2.y)) <= rCircle) {
 		player->sprite()->color = BLUE;
+		checkPoint2Check = true;
 	}
 
 	if (sqrt((dist3.x * dist3.x) + (dist3.y * dist3.y)) <= rCircle) {
 		player->sprite()->color = BLUE;
+		checkPoint3Check = true;
 	}
 
 	if (sqrt((dist4.x * dist4.x) + (dist4.y * dist4.y)) <= rCircle) {
 		player->sprite()->color = BLUE;
+		checkPoint4Check = true;
+	}
+}
+
+void MyScene::finishCol() {
+
+	Point distF = player->position - finish;
+
+	if (sqrt((distF.x * distF.x) + (distF.y * distF.y)) <= rCircle) {
+		player->sprite()->color = BLUE;
+		finishCheck = true;
+	}
+}
+
+void MyScene::finished() {
+	if (checkPoint1Check == true && checkPoint2Check == true && checkPoint3Check == true && checkPoint4Check == true) {
+		finishCol();
+		if (finishCheck == true) {
+			//std::cout << "You finished yay" << std::endl;
+			endTime = t.seconds();
+
+			std::cout << endTime << std::endl;
+			t.stop();
+		}
+	}
+}
+
+void MyScene::checkpointCheck() {
+
+	if (checkPoint2Check == true && checkPoint1Check == false) {
+		checkPoint2Check = false;
+		std::cout << "you forgot the first checkpoint" << std::endl;
+	}
+	else if (checkPoint3Check == true && checkPoint1Check == false) {
+		checkPoint2Check = false;
+		checkPoint3Check = false;
+		std::cout << "you forgot the first checkpoint" << std::endl;
+	}
+	else if (checkPoint4Check == true && checkPoint1Check == false) {
+		checkPoint2Check = false;
+		checkPoint3Check = false;
+		checkPoint4Check = false;
+		std::cout << "you forgot the first checkpoint" << std::endl;
+	}
+	else if (checkPoint2Check == false && checkPoint3Check == true) {
+		checkPoint3Check = false;
+		std::cout << "you forgot the second one" << std::endl;
+	}
+	else if (checkPoint2Check == false && checkPoint4Check == true) {
+		checkPoint3Check = false;
+		checkPoint4Check = false;
+		std::cout << "you forgot the second one" << std::endl;
+	}
+	else if (checkPoint3Check == false && checkPoint4Check == true) {
+		checkPoint4Check = false;
+		std::cout << "you forgot the third one" << std::endl;
 	}
 }

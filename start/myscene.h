@@ -10,6 +10,8 @@
 #define MYSCENE_H
 
 #include <rt2d/scene.h>
+#include <rt2d/text.h>
+#include "basicentity.h"
 
 #include "player.h"
 #include "enemy.h"
@@ -35,10 +37,13 @@ public:
 	int getindex(int x, int y, int w, int h);
 
 private:
-	/// @brief the rotating square in the middle of the screen
 	Player* player;
 	Enemy* enemy;
 	Coin* coin;
+
+	Text* timerText;
+
+	//BasicEntity* background;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
@@ -47,6 +52,15 @@ private:
 	Point2 checkPoint2;
 	Point2 checkPoint3;
 	Point2 checkPoint4;
+
+	Point2 finish;
+
+	bool checkPoint1Check;
+	bool checkPoint2Check;
+	bool checkPoint3Check;
+	bool checkPoint4Check;
+
+	bool finishCheck;
 
 	float rCircle;
 
@@ -62,10 +76,19 @@ private:
 	int score;
 
 	void checkpointCol();
-
 	void playerCol();
-	/// @brief a Timer to rotate the color every n seconds
+	void checkpointCheck();
+	void finishCol();
+	void finished();
+
 	Timer t;
+	float endTime;
+
+protected:
+	unsigned int top_layer;
+	unsigned int bottom_layer;
+	std::vector<Text*> text;
+	std::vector<BasicEntity*> layers;
 };
 
 #endif /* SCENE00_H */

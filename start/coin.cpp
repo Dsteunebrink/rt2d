@@ -4,6 +4,7 @@
 Coin::Coin() : Entity()
 {
 	this->addSprite("assets/coin.tga");
+	time = 0;
 }
 
 
@@ -20,7 +21,6 @@ void Coin::update(float deltaTime)
 			this->scale -= Point(0.01f, 0.01f);
 		}
 		else {
-			
 			deleteCoin = true;
 		}
 	}
