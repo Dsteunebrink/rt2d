@@ -14,19 +14,24 @@ MyScene::MyScene() : Scene()
 	// start the timer.
 	t.start();
 
+	endTime = 0.0f;
+
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
 	player = new Player();
 	enemy = new Enemy();
 	coin = new Coin();
 	timerText = new Text();
+	endTimerText = new Text();
+	forgotCheckpoint = new Text();
 
 	//myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
-	timerText->scale = Point2(1.0f, 1.0f);
+	timerText->scale = Point2(0.5f, 0.5f);
+	endTimerText->scale = Point2(0.5f, 0.5f);
 
-	player->position = Point(-1000, 300);
+	player->position = Point(-1100, 300);
 	enemy->position = Point(-1000, 300);
 	coin->position = Point(-1400, -500);
 
@@ -34,6 +39,12 @@ MyScene::MyScene() : Scene()
 	checkPoint2 = Point2(950, -1300);
 	checkPoint3 = Point2(1400, 200);
 	checkPoint4 = Point2(-950, 1220);
+
+	checkPoint1Check = false;
+	checkPoint2Check = false;
+	checkPoint3Check = false;
+	checkPoint4Check = false;
+	finishCheck = false;
 
 	finish = Point2(-1000, 300);
 
@@ -52,6 +63,8 @@ MyScene::MyScene() : Scene()
 	this->addChild(enemy);
 	this->addChild(coin);
 	this->addChild(timerText);
+	this->addChild(endTimerText);
+	this->addChild(forgotCheckpoint);
 
 	background_gray = new Sprite();
 	background_gray->setupSpriteTGAPixelBuffer("assets/background_gray.tga", 0, 2);
@@ -68,43 +81,37 @@ MyScene::MyScene() : Scene()
 MyScene::~MyScene()
 {
 
-	int ls = layers.size();
-	for (int i = 0; i < ls; i++) {
-		this->removeChild(layers[i]);
-		delete layers[i];
-		layers[i] = NULL;
-	}
-	layers.clear();
-
-	int ts = text.size();
-	for (int i = 0; i < ts; i++) {
-		this->removeChild(text[i]);
-		delete text[i];
-		text[i] = NULL;
-	}
-	text.clear();
-
 	// deconstruct and delete the Tree
 	this->removeChild(player);
 	this->removeChild(enemy);
 	this->removeChild(coin);
 	this->removeChild(timerText);
+	this->removeChild(endTimerText);
+	this->removeChild(forgotCheckpoint);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
 	delete enemy;
 	delete coin;
 	delete timerText;
+	delete endTimerText;
+	delete forgotCheckpoint;
 }
 
 void MyScene::update(float deltaTime)
 {
-	timerText->position = Point2(camera()->position.x, camera()->position.y);
-	timerText->message(std::to_string(int(t.seconds())));
+	timerText->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 50  - SHEIGHT / 2);
+	timerText->message("Time: " + std::to_string(int(t.seconds())));
+
+	endTimerText->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 110 - SHEIGHT / 2);
+	endTimerText->message("Best Time: " + std::to_string(int(endTime)));
+
+	forgotCheckpoint->position = Point2(camera()->position.x + 150 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
 
 	checkpointCol();
 	playerCol();
 	checkpointCheck();
+	finishCol();
 	finished();
 
 	if (coin->deleteCoin == true) {
@@ -113,6 +120,8 @@ void MyScene::update(float deltaTime)
 		col = true;
 		coin->deleteCoin = false;
 	}
+
+	std::cout << t.seconds() << std::endl;
 
 	x = player->position.x + 2048;
 	y = player->position.y + 2048;
@@ -168,9 +177,13 @@ void MyScene::playerCol() {
 
 	if (player->sprite()->size.y / 4 + enemy->sprite()->size.y / 2 > sqrt(Vector3(player->position - enemy->position).x * Vector3(player->position - enemy->position).x + (Vector3(player->position - enemy->position).y * Vector3(player->position - enemy->position).y))) { //true if overlapping
 		player->sprite()->color = BLUE;
+
+		//this->removeChild(player);
+		//this->removeChild(enemy);
 	}
 	else {
 		addScore = true;
+		player->sprite()->color = RED;
 	}
 }
 
@@ -182,25 +195,18 @@ void MyScene::checkpointCol() {
 	Point dist4 = player->position - checkPoint4;
 
 	if (sqrt((dist1.x * dist1.x) + (dist1.y * dist1.y)) <= rCircle) {
-		player->sprite()->color = BLUE;
 		checkPoint1Check = true;
-	}
-	else {
-		player->sprite()->color = RED;
 	}
 
 	if (sqrt((dist2.x * dist2.x) + (dist2.y * dist2.y)) <= rCircle) {
-		player->sprite()->color = BLUE;
 		checkPoint2Check = true;
 	}
 
 	if (sqrt((dist3.x * dist3.x) + (dist3.y * dist3.y)) <= rCircle) {
-		player->sprite()->color = BLUE;
 		checkPoint3Check = true;
 	}
 
 	if (sqrt((dist4.x * dist4.x) + (dist4.y * dist4.y)) <= rCircle) {
-		player->sprite()->color = BLUE;
 		checkPoint4Check = true;
 	}
 }
@@ -210,20 +216,37 @@ void MyScene::finishCol() {
 	Point distF = player->position - finish;
 
 	if (sqrt((distF.x * distF.x) + (distF.y * distF.y)) <= rCircle) {
-		player->sprite()->color = BLUE;
-		finishCheck = true;
+		if (checkPoint4Check == true && checkPoint3Check == true && checkPoint2Check == true && checkPoint1Check == true) {
+			finishCheck = true;
+		}
+
+		if (checkPoint4Check == false && checkPoint3Check == true && checkPoint2Check == true && checkPoint1Check == true) {
+			forgotCheckpoint->message("you forgot the fourth checkpoint");
+			checkPoint4Check = false;
+		}
 	}
 }
 
 void MyScene::finished() {
 	if (checkPoint1Check == true && checkPoint2Check == true && checkPoint3Check == true && checkPoint4Check == true) {
-		finishCol();
 		if (finishCheck == true) {
-			//std::cout << "You finished yay" << std::endl;
-			endTime = t.seconds();
+
+			if (endTime >= t.seconds() || endTime == 0) {
+
+				endTime = t.seconds();
+			}
 
 			std::cout << endTime << std::endl;
 			t.stop();
+
+			checkPoint1Check = false;
+			checkPoint2Check = false;
+			checkPoint3Check = false;
+			checkPoint4Check = false;
+
+			finishCheck = false;
+
+			t.start();
 		}
 	}
 }
@@ -232,30 +255,34 @@ void MyScene::checkpointCheck() {
 
 	if (checkPoint2Check == true && checkPoint1Check == false) {
 		checkPoint2Check = false;
-		std::cout << "you forgot the first checkpoint" << std::endl;
+		forgotCheckpoint->message("you forgot the first checkpoint");
 	}
 	else if (checkPoint3Check == true && checkPoint1Check == false) {
 		checkPoint2Check = false;
 		checkPoint3Check = false;
-		std::cout << "you forgot the first checkpoint" << std::endl;
+		forgotCheckpoint->message("you forgot the first checkpoint");
 	}
 	else if (checkPoint4Check == true && checkPoint1Check == false) {
 		checkPoint2Check = false;
 		checkPoint3Check = false;
 		checkPoint4Check = false;
-		std::cout << "you forgot the first checkpoint" << std::endl;
+		forgotCheckpoint->message("you forgot the first checkpoint");
 	}
 	else if (checkPoint2Check == false && checkPoint3Check == true) {
 		checkPoint3Check = false;
-		std::cout << "you forgot the second one" << std::endl;
+		forgotCheckpoint->message("you forgot the second checkpoint");
 	}
 	else if (checkPoint2Check == false && checkPoint4Check == true) {
 		checkPoint3Check = false;
 		checkPoint4Check = false;
-		std::cout << "you forgot the second one" << std::endl;
+		forgotCheckpoint->message("you forgot the second checkpoint");
 	}
 	else if (checkPoint3Check == false && checkPoint4Check == true) {
 		checkPoint4Check = false;
-		std::cout << "you forgot the third one" << std::endl;
+		forgotCheckpoint->message("you forgot the third checkpoint");
+	}
+	else {
+		
+		forgotCheckpoint->message("");
 	}
 }

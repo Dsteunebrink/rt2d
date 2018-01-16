@@ -11,7 +11,6 @@
 
 #include <rt2d/scene.h>
 #include <rt2d/text.h>
-#include "basicentity.h"
 
 #include "player.h"
 #include "enemy.h"
@@ -42,8 +41,8 @@ private:
 	Coin* coin;
 
 	Text* timerText;
-
-	//BasicEntity* background;
+	Text* endTimerText;
+	Text* forgotCheckpoint;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
@@ -85,10 +84,6 @@ private:
 	float endTime;
 
 protected:
-	unsigned int top_layer;
-	unsigned int bottom_layer;
-	std::vector<Text*> text;
-	std::vector<BasicEntity*> layers;
 };
 
 #endif /* SCENE00_H */
