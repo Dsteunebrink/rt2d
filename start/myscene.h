@@ -39,10 +39,15 @@ private:
 	Player* player;
 	Enemy* enemy;
 	Coin* coin;
+	Coin* coin2;
 
 	Text* timerText;
 	Text* endTimerText;
+	Text* coinCounter;
 	Text* forgotCheckpoint;
+	Text* endText;
+	Text* deadText;
+	Text* resetText;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
@@ -61,6 +66,8 @@ private:
 
 	bool finishCheck;
 
+	bool spaceCheck;
+
 	float rCircle;
 
 	bool addScore;
@@ -72,6 +79,8 @@ private:
 	int x;
 	int y;
 
+	int laps;
+
 	int score;
 
 	void checkpointCol();
@@ -79,8 +88,10 @@ private:
 	void checkpointCheck();
 	void finishCol();
 	void finished();
+	void startRace();
 
 	Timer t;
+	float timer;
 	float endTime;
 
 protected:

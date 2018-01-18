@@ -29,6 +29,8 @@ public:
 	void backToHome();
 	void addForce(Vector3 force);
 
+	int time;
+
 private:
 	/* add your private declarations */
 
@@ -44,8 +46,6 @@ private:
 	float topSpeed;
 
 	bool voidChecker;
-
-	int time;
 };
 
 #endif /* MYENEMY_H */

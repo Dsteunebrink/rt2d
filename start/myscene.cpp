@@ -10,71 +10,38 @@
 #include "myscene.h"
 
 MyScene::MyScene() : Scene()
-{
-	// start the timer.
-	t.start();
-
-	endTime = 0.0f;
-
-	// create a single instance of MyEntity in the middle of the screen.
-	// the Sprite is added in Constructor of MyEntity.
+{	
 	player = new Player();
 	enemy = new Enemy();
 	coin = new Coin();
+	coin2 = new Coin();
 	timerText = new Text();
 	endTimerText = new Text();
+	coinCounter = new Text();
 	forgotCheckpoint = new Text();
+	endText = new Text();
+	deadText = new Text();
 
-	//myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
+	resetText = new Text();
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
 	timerText->scale = Point2(0.5f, 0.5f);
+	coinCounter->scale = Point2(0.5f, 0.5f);
 	endTimerText->scale = Point2(0.5f, 0.5f);
+	resetText->scale = Point2(0.8f, 0.8f);
 
-	player->position = Point(-1100, 300);
-	enemy->position = Point(-1000, 300);
-	coin->position = Point(-1400, -500);
-
-	checkPoint1 = Point2(-1300, -1200);
-	checkPoint2 = Point2(950, -1300);
-	checkPoint3 = Point2(1400, 200);
-	checkPoint4 = Point2(-950, 1220);
-
-	checkPoint1Check = false;
-	checkPoint2Check = false;
-	checkPoint3Check = false;
-	checkPoint4Check = false;
-	finishCheck = false;
-
-	finish = Point2(-1000, 300);
-
-	col = false;
-
-	rCircle = 130.0f;
-
-	addScore = true;
-
-
+	rCircle = 135.0f;
 
 	this->addSprite("assets/background.tga");
 	// create the scene 'tree'
 	// add player and enemy to this Scene as a child.
-	this->addChild(player);
-	this->addChild(enemy);
-	this->addChild(coin);
-	this->addChild(timerText);
-	this->addChild(endTimerText);
-	this->addChild(forgotCheckpoint);
+
 
 	background_gray = new Sprite();
 	background_gray->setupSpriteTGAPixelBuffer("assets/background_gray.tga", 0, 2);
 	bg_gray = background_gray->texture()->pixels();
 
-	counter = 0;
-	tcounter = 0;
-
-	x = 0;
-	y = 0;
+	startRace();
 }
 
 
@@ -85,17 +52,27 @@ MyScene::~MyScene()
 	this->removeChild(player);
 	this->removeChild(enemy);
 	this->removeChild(coin);
+	this->removeChild(coin2);
 	this->removeChild(timerText);
 	this->removeChild(endTimerText);
+	this->removeChild(coinCounter);
 	this->removeChild(forgotCheckpoint);
+	this->removeChild(endText);
+	this->removeChild(deadText);
+	this->removeChild(resetText);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
 	delete enemy;
 	delete coin;
+	delete coin2;
 	delete timerText;
 	delete endTimerText;
+	delete coinCounter;
 	delete forgotCheckpoint;
+	delete endText;
+	delete deadText;
+	delete resetText;
 }
 
 void MyScene::update(float deltaTime)
@@ -106,22 +83,62 @@ void MyScene::update(float deltaTime)
 	endTimerText->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 110 - SHEIGHT / 2);
 	endTimerText->message("Best Time: " + std::to_string(int(endTime)));
 
+	coinCounter->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 170 - SHEIGHT / 2);
+	coinCounter->message("Coins: " + std::to_string(score) + "/2");
+
 	forgotCheckpoint->position = Point2(camera()->position.x + 150 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
+
+	endText->position = Point2(camera()->position.x + 30 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
+	
+	deadText->position = Point2(camera()->position.x + 210 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
+	
+	resetText->position = Point2(camera()->position.x + 390 - SWIDTH / 2, camera()->position.y + 400 - SHEIGHT / 2);
 
 	checkpointCol();
 	playerCol();
 	checkpointCheck();
 	finishCol();
 	finished();
+	if (spaceCheck == true) {
+		if (input()->getKeyDown(KeyCode::Space)) {
+
+			endText->message("");
+			resetText->message("");
+			deadText->message("");
+
+			enemy->rotation = Point(0.0f, 0.0f);
+
+			this->removeChild(player);
+			this->removeChild(enemy);
+			this->removeChild(coin);
+			this->removeChild(coin2);
+			this->removeChild(timerText);
+			this->removeChild(endTimerText);
+			this->removeChild(coinCounter);
+			this->removeChild(forgotCheckpoint);
+			this->removeChild(endText);
+			this->removeChild(deadText);
+			this->removeChild(resetText);
+
+			startRace();
+		}
+	}
 
 	if (coin->deleteCoin == true) {
 		player->sprite()->color = RED;
 		this->removeChild(coin);
 		col = true;
+		score++;
 		coin->deleteCoin = false;
 	}
 
-	std::cout << t.seconds() << std::endl;
+	if (coin2->deleteCoin == true) {
+		player->sprite()->color = RED;
+		this->removeChild(coin2);
+		col = true;
+		score++;
+		coin2->deleteCoin = false;
+	}
 
 	x = player->position.x + 2048;
 	y = player->position.y + 2048;
@@ -163,23 +180,27 @@ int MyScene::getindex(int x, int y, int w, int h) {
 
 void MyScene::playerCol() {
 
-
-
-	if (col == false) {
-		if (player->sprite()->size.y / 4 + coin->sprite()->size.y / 2 > sqrt(Vector3(player->position - coin->position).x * Vector3(player->position - coin->position).x + (Vector3(player->position - coin->position).y * Vector3(player->position - coin->position).y))) { //true if overlapping
-			coin->colCheck = true;
-			if (addScore == true) {
-				score++;
-				addScore = false;
-			}
-		}
+	if (player->sprite()->size.y / 4 + coin->sprite()->size.y / 2 > sqrt(Vector3(player->position - coin->position).x * Vector3(player->position - coin->position).x + (Vector3(player->position - coin->position).y * Vector3(player->position - coin->position).y))) { //true if overlapping
+		coin->colCheck = true;
 	}
 
-	if (player->sprite()->size.y / 4 + enemy->sprite()->size.y / 2 > sqrt(Vector3(player->position - enemy->position).x * Vector3(player->position - enemy->position).x + (Vector3(player->position - enemy->position).y * Vector3(player->position - enemy->position).y))) { //true if overlapping
-		player->sprite()->color = BLUE;
 
-		//this->removeChild(player);
-		//this->removeChild(enemy);
+
+	if (player->sprite()->size.y / 4 + coin2->sprite()->size.y / 2 > sqrt(Vector3(player->position - coin2->position).x * Vector3(player->position - coin2->position).x + (Vector3(player->position - coin2->position).y * Vector3(player->position - coin2->position).y))) { //true if overlapping
+		coin2->colCheck = true;
+	}
+
+
+	if (player->sprite()->size.y / 4 + enemy->sprite()->size.y / 2 > sqrt(Vector3(player->position - enemy->position).x * Vector3(player->position - enemy->position).x + (Vector3(player->position - enemy->position).y * Vector3(player->position - enemy->position).y))) { //true if overlapping
+
+		player->stopMovement = true;
+
+		this->removeChild(player);
+		this->removeChild(enemy);
+
+		deadText->message("You have crashed your car");
+		resetText->message("Press space to reset");
+		spaceCheck = true;
 	}
 	else {
 		addScore = true;
@@ -230,23 +251,54 @@ void MyScene::finishCol() {
 void MyScene::finished() {
 	if (checkPoint1Check == true && checkPoint2Check == true && checkPoint3Check == true && checkPoint4Check == true) {
 		if (finishCheck == true) {
+			if (laps == 0) {
+				if (endTime >= t.seconds() || endTime == 0) {
+					endTime = t.seconds();
 
-			if (endTime >= t.seconds() || endTime == 0) {
+					if (score == 1) {
+						endTime -= 1;
+					}
+					else if (score == 2) {
+						endTime -= 2;
+					}
+				}
 
-				endTime = t.seconds();
+				checkPoint1Check = false;
+				checkPoint2Check = false;
+				checkPoint3Check = false;
+				checkPoint4Check = false;
+
+				t.stop();
+				endText->message("You finished! your best time is: " + std::to_string(int(endTime)) + " sec");
+				resetText->message("Press space to reset");
+				player->stopMovement = true;
+				spaceCheck = true;
+				finishCheck = false;
 			}
+			else {
+				laps++;
+				if (endTime >= t.seconds() || endTime == 0) {
+					endTime = t.seconds();
 
-			std::cout << endTime << std::endl;
-			t.stop();
+					if (score == 1) {
+						endTime -= 1;
+					}
+					else if (score == 2) {
+						endTime -= 2;
+					}
+				}
 
-			checkPoint1Check = false;
-			checkPoint2Check = false;
-			checkPoint3Check = false;
-			checkPoint4Check = false;
+				t.stop();
 
-			finishCheck = false;
+				checkPoint1Check = false;
+				checkPoint2Check = false;
+				checkPoint3Check = false;
+				checkPoint4Check = false;
 
-			t.start();
+				finishCheck = false;
+
+				t.start();
+			}
 		}
 	}
 }
@@ -285,4 +337,63 @@ void MyScene::checkpointCheck() {
 		
 		forgotCheckpoint->message("");
 	}
+}
+
+void MyScene::startRace() {
+
+	t.start();
+
+	endTime = 0.0f;
+	enemy->time = 0;
+	enemy->direction(Point2(0, -100));
+	laps = 0;
+	score = 0;
+	
+	coinCounter->message("Coins: " + std::to_string(score) + "/2");
+	player->stopMovement = false;
+
+	this->addChild(player);
+	this->addChild(enemy);
+	this->addChild(coin);
+	this->addChild(coin2);
+	this->addChild(timerText);
+	this->addChild(endTimerText);
+	this->addChild(coinCounter);
+	this->addChild(forgotCheckpoint);
+	this->addChild(endText);
+	this->addChild(deadText);
+	this->addChild(resetText);
+
+	player->position = Point(-1100, 300);
+	enemy->position = Point(-1000, 300);
+	coin->position = Point(700, -1100);
+	coin2->position = Point(1000, -130);
+
+	checkPoint1 = Point2(-1300, -1200);
+	checkPoint2 = Point2(950, -1300);
+	checkPoint3 = Point2(1400, 200);
+	checkPoint4 = Point2(-950, 1220);
+
+	checkPoint1Check = false;
+	checkPoint2Check = false;
+	checkPoint3Check = false;
+	checkPoint4Check = false;
+	finishCheck = false;
+	spaceCheck = false;
+	coin->deleteCoin = false;
+	coin2->deleteCoin = false;
+	coin->colCheck = false;
+	coin2->colCheck = false;
+
+	finish = Point2(-1000, 300);
+
+	col = false;
+
+	addScore = true;
+
+	counter = 0;
+	tcounter = 0;
+
+	x = 0;
+	y = 0;
 }

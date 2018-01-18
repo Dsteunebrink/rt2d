@@ -26,9 +26,9 @@ public:
 
 	bool velocityCheck;
 
-private:
-	/* add your private declarations */
+	bool stopMovement;
 
+private:
 	bool slowDownCheck;
 };
 

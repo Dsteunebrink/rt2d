@@ -10,7 +10,7 @@ Enemy::Enemy() : Entity()
 
 	time = int(0);
 
-	direction(Point2(0, -100));
+	//direction(Point2(0, -100));
 }
 
 
