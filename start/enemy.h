@@ -29,6 +29,8 @@ public:
 	void backToHome();
 	void addForce(Vector3 force);
 
+	bool stopEnemyMovement;
+
 	int time;
 
 private:

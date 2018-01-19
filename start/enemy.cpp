@@ -8,6 +8,8 @@ Enemy::Enemy() : Entity()
 
 	voidChecker = true;
 
+	stopEnemyMovement = false;
+
 	time = int(0);
 
 	//direction(Point2(0, -100));
@@ -20,9 +22,11 @@ Enemy::~Enemy()
 
 void Enemy::update(float deltaTime)
 {
-	this->rotation.z = velocity.getAngle();
-	this->position += velocity;
-	acceleration = Vector2(0, 0);
+	if (stopEnemyMovement == false) {
+		this->rotation.z = velocity.getAngle();
+		this->position += velocity;
+		acceleration = Vector2(0, 0);
+	}
 
 	time++;
 
@@ -211,41 +215,43 @@ void Enemy::addForce(Vector3 force) {
 }
 
 void Enemy::direction(Point2 checkpoint) {
+	if (stopEnemyMovement == false) {
+		Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
+		location = Vector2(0, 0);
+		dir = Vector2() - Vector2(Vcheckpoint, location);
+		velocity = Vector2(0, 0);
+		acceleration = Vector2(0, 0);
 
-	Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
-	location = Vector2(0, 0);
-	dir = Vector2() - Vector2(Vcheckpoint, location);
-	velocity = Vector2(0, 0);
-	acceleration = Vector2(0, 0);
+		Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
+		location = Vector2(0, 0);
+		dir = Vector2() - Vector2(Vcheckpoint, location);
 
-	Vcheckpoint = Vector2(checkpoint.x, checkpoint.y);
-	location = Vector2(0, 0);
-	dir = Vector2() - Vector2(Vcheckpoint, location);
-
-	dir * 0.5f;
-	dir.normalize();
-	dir *= 40;
-	acceleration = dir;
-	velocity += acceleration;
-	velocity.limit(1);
-	this->rotation.z = velocity.getAngle();
-	acceleration = Vector2(0, 0);
+		dir * 0.5f;
+		dir.normalize();
+		dir *= 40;
+		acceleration = dir;
+		velocity += acceleration;
+		velocity.limit(1);
+		this->rotation.z = velocity.getAngle();
+		acceleration = Vector2(0, 0);
+	}
 }
 
 void Enemy::backToHome() {
+	if (stopEnemyMovement == false) {
+		velocity = Vector2(0, 0);
+		acceleration = Vector2(0, 0);
+		Vcheckpoint = Vector2(-1000, 300);
+		location = Vector2(this->position);
+		dir = Vector2() - Vector2(Vcheckpoint, location);
 
-	velocity = Vector2(0, 0);
-	acceleration = Vector2(0, 0);
-	Vcheckpoint = Vector2(-1000, 300);
-	location = Vector2(this->position);
-	dir = Vector2() - Vector2(Vcheckpoint, location);
-
-	dir * 0.5f;
-	dir.normalize();
-	dir *= 40;
-	acceleration = dir;
-	velocity += acceleration;
-	velocity.limit(1);
+		dir * 0.5f;
+		dir.normalize();
+		dir *= 40;
+		acceleration = dir;
+		velocity += acceleration;
+		velocity.limit(1);
+	}
 }
 
 

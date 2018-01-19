@@ -106,8 +106,6 @@ void MyScene::update(float deltaTime)
 			resetText->message("");
 			deadText->message("");
 
-			enemy->rotation = Point(0.0f, 0.0f);
-
 			this->removeChild(player);
 			this->removeChild(enemy);
 			this->removeChild(coin);
@@ -251,7 +249,7 @@ void MyScene::finishCol() {
 void MyScene::finished() {
 	if (checkPoint1Check == true && checkPoint2Check == true && checkPoint3Check == true && checkPoint4Check == true) {
 		if (finishCheck == true) {
-			if (laps == 0) {
+			if (laps == 3) {
 				if (endTime >= t.seconds() || endTime == 0) {
 					endTime = t.seconds();
 
@@ -271,7 +269,11 @@ void MyScene::finished() {
 				t.stop();
 				endText->message("You finished! your best time is: " + std::to_string(int(endTime)) + " sec");
 				resetText->message("Press space to reset");
+
+				enemy->direction(Point2(0, -100));
+
 				player->stopMovement = true;
+				enemy->stopEnemyMovement = true;
 				spaceCheck = true;
 				finishCheck = false;
 			}
@@ -344,13 +346,10 @@ void MyScene::startRace() {
 	t.start();
 
 	endTime = 0.0f;
-	enemy->time = 0;
-	enemy->direction(Point2(0, -100));
 	laps = 0;
 	score = 0;
 	
 	coinCounter->message("Coins: " + std::to_string(score) + "/2");
-	player->stopMovement = false;
 
 	this->addChild(player);
 	this->addChild(enemy);
@@ -363,6 +362,9 @@ void MyScene::startRace() {
 	this->addChild(endText);
 	this->addChild(deadText);
 	this->addChild(resetText);
+
+	enemy->direction(Point2(0, -100));
+	enemy->time = 0;
 
 	player->position = Point(-1100, 300);
 	enemy->position = Point(-1000, 300);
@@ -384,6 +386,11 @@ void MyScene::startRace() {
 	coin2->deleteCoin = false;
 	coin->colCheck = false;
 	coin2->colCheck = false;
+	player->stopMovement = false;
+	enemy->stopEnemyMovement = false;
+
+	coin->scale = Point2(1.0f, 1.0f);
+	coin2->scale = Point2(1.0f, 1.0f);
 
 	finish = Point2(-1000, 300);
 
