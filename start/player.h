@@ -25,8 +25,8 @@ public:
 	virtual void update(float deltaTime);
 
 	bool velocityCheck;
-
 	bool stopMovement;
+	bool resetVel;
 
 private:
 	bool slowDownCheck;

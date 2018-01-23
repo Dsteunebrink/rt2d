@@ -21,21 +21,24 @@ MyScene::MyScene() : Scene()
 	forgotCheckpoint = new Text();
 	endText = new Text();
 	deadText = new Text();
-
+	menuText = new Text();
+	startText = new Text();
 	resetText = new Text();
+	infoText = new Text();
+
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
 	timerText->scale = Point2(0.5f, 0.5f);
 	coinCounter->scale = Point2(0.5f, 0.5f);
 	endTimerText->scale = Point2(0.5f, 0.5f);
 	resetText->scale = Point2(0.8f, 0.8f);
+	infoText->scale = Point2(0.7f, 0.7f);
+
+	endTime = 0.0f;
 
 	rCircle = 135.0f;
 
 	this->addSprite("assets/background.tga");
-	// create the scene 'tree'
-	// add player and enemy to this Scene as a child.
-
 
 	background_gray = new Sprite();
 	background_gray->setupSpriteTGAPixelBuffer("assets/background_gray.tga", 0, 2);
@@ -60,6 +63,9 @@ MyScene::~MyScene()
 	this->removeChild(endText);
 	this->removeChild(deadText);
 	this->removeChild(resetText);
+	this->removeChild(menuText);
+	this->removeChild(startText);
+	this->removeChild(infoText);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
@@ -73,6 +79,9 @@ MyScene::~MyScene()
 	delete endText;
 	delete deadText;
 	delete resetText;
+	delete menuText;
+	delete startText;
+	delete infoText;
 }
 
 void MyScene::update(float deltaTime)
@@ -90,15 +99,33 @@ void MyScene::update(float deltaTime)
 
 	endText->position = Point2(camera()->position.x + 30 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
 	
-	deadText->position = Point2(camera()->position.x + 210 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
+	deadText->position = Point2(camera()->position.x + 250 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
 	
 	resetText->position = Point2(camera()->position.x + 390 - SWIDTH / 2, camera()->position.y + 400 - SHEIGHT / 2);
+
+	menuText->position = Point2(camera()->position.x + 350 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
+
+	startText->position = Point2(camera()->position.x + 350 - SWIDTH / 2, camera()->position.y + 400 - SHEIGHT / 2);
+
+	infoText->position = Point2(camera()->position.x + 100 - SWIDTH / 2, camera()->position.y + 450 - SHEIGHT / 2);
 
 	checkpointCol();
 	playerCol();
 	checkpointCheck();
 	finishCol();
 	finished();
+	if (enterCheck = true) {
+		if (input()->getKeyDown(KeyCode::Enter)) {
+			menuText->message("");
+			startText->message("");
+			infoText->message("");
+			player->stopMovement = false;
+			enemy->stopEnemyMovement = false;
+			enemy->time = 0;
+			enterCheck = false;
+		}
+	}
+
 	if (spaceCheck == true) {
 		if (input()->getKeyDown(KeyCode::Space)) {
 
@@ -127,6 +154,7 @@ void MyScene::update(float deltaTime)
 		this->removeChild(coin);
 		col = true;
 		score++;
+		coinCheck = true;
 		coin->deleteCoin = false;
 	}
 
@@ -135,6 +163,7 @@ void MyScene::update(float deltaTime)
 		this->removeChild(coin2);
 		col = true;
 		score++;
+		coinCheck = true;
 		coin2->deleteCoin = false;
 	}
 
@@ -199,6 +228,7 @@ void MyScene::playerCol() {
 		deadText->message("You have crashed your car");
 		resetText->message("Press space to reset");
 		spaceCheck = true;
+		t.stop();
 	}
 	else {
 		addScore = true;
@@ -250,17 +280,18 @@ void MyScene::finished() {
 	if (checkPoint1Check == true && checkPoint2Check == true && checkPoint3Check == true && checkPoint4Check == true) {
 		if (finishCheck == true) {
 			if (laps == 3) {
-				if (endTime >= t.seconds() || endTime == 0) {
-					endTime = t.seconds();
+				if (coinCheck == true) {
+					if (endTime >= t.seconds() || endTime == 0) {
+						endTime = t.seconds();
 
-					if (score == 1) {
-						endTime -= 1;
-					}
-					else if (score == 2) {
-						endTime -= 2;
+						if (score == 1) {
+							endTime -= 1;
+						}
+						else if (score == 2) {
+							endTime -= 2;
+						}
 					}
 				}
-
 				checkPoint1Check = false;
 				checkPoint2Check = false;
 				checkPoint3Check = false;
@@ -292,10 +323,30 @@ void MyScene::finished() {
 
 				t.stop();
 
+				this->removeChild(coin);
+				this->removeChild(coin2);
+
+				coin->colCheck = false;
+				coin2->colCheck = false;
+
+				this->addChild(coin);
+				this->addChild(coin2);
+
+				coin->deleteCoin = false;
+				coin2->deleteCoin = false;
+				col = false;
+
+				score = 0;
+
 				checkPoint1Check = false;
 				checkPoint2Check = false;
 				checkPoint3Check = false;
 				checkPoint4Check = false;
+
+				coin->scale = Point2(1.0f, 1.0f);
+				coin2->scale = Point2(1.0f, 1.0f);
+
+				coinCheck = false;
 
 				finishCheck = false;
 
@@ -345,11 +396,8 @@ void MyScene::startRace() {
 
 	t.start();
 
-	endTime = 0.0f;
 	laps = 0;
 	score = 0;
-	
-	coinCounter->message("Coins: " + std::to_string(score) + "/2");
 
 	this->addChild(player);
 	this->addChild(enemy);
@@ -362,6 +410,13 @@ void MyScene::startRace() {
 	this->addChild(endText);
 	this->addChild(deadText);
 	this->addChild(resetText);
+	this->addChild(menuText);
+	this->addChild(startText);
+	this->addChild(infoText);
+
+	menuText->message("Welcome to Car Crash");
+	startText->message("Press enter to start");
+	infoText->message("You can steer with A and D and move with W and S");
 
 	enemy->direction(Point2(0, -100));
 	enemy->time = 0;
@@ -386,8 +441,10 @@ void MyScene::startRace() {
 	coin2->deleteCoin = false;
 	coin->colCheck = false;
 	coin2->colCheck = false;
-	player->stopMovement = false;
-	enemy->stopEnemyMovement = false;
+	player->resetVel = true;
+	player->stopMovement = true;
+	enemy->stopEnemyMovement = true;
+	enterCheck = true;
 
 	coin->scale = Point2(1.0f, 1.0f);
 	coin2->scale = Point2(1.0f, 1.0f);

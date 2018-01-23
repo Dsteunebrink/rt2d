@@ -24,6 +24,10 @@ void Player::update(float deltaTime)
 	static Vector2 velocity = Vector2((rand() % 100) - 50, (rand() % 100) - 50);
 	static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
 
+	if (resetVel == true) {
+		velocity -= velocity / 1.0f;
+	}
+
 	if (stopMovement == false) {
 		float rotspeed = 3.14f;
 
@@ -50,6 +54,7 @@ void Player::update(float deltaTime)
 		if (input()->getKey(KeyCode::W)) {
 			if (slowDownCheck == true) {
 				velocity += polar.cartesian() * deltaTime; // thrust
+				resetVel = false;
 			}
 		}
 		else {
@@ -57,12 +62,15 @@ void Player::update(float deltaTime)
 		}
 		if (input()->getKey(KeyCode::D)) {
 			polar.angle += rotspeed * deltaTime; // rotate right
+			resetVel = false;
 		}
 		if (input()->getKey(KeyCode::S)) {
 			velocity -= polar.cartesian() * deltaTime; // brake
+			resetVel = false;
 		}
 		if (input()->getKey(KeyCode::A)) {
 			polar.angle -= rotspeed * deltaTime; // rotate left
+			resetVel = false;
 		}
 
 		this->rotation.z = polar.angle;

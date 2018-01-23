@@ -48,6 +48,9 @@ private:
 	Text* endText;
 	Text* deadText;
 	Text* resetText;
+	Text* menuText;
+	Text* startText;
+	Text* infoText;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;
@@ -56,31 +59,24 @@ private:
 	Point2 checkPoint2;
 	Point2 checkPoint3;
 	Point2 checkPoint4;
-
 	Point2 finish;
 
 	bool checkPoint1Check;
 	bool checkPoint2Check;
 	bool checkPoint3Check;
 	bool checkPoint4Check;
-
 	bool finishCheck;
-
 	bool spaceCheck;
-
-	float rCircle;
-
 	bool addScore;
-
 	bool col;
+	bool coinCheck;
+	bool enterCheck;
 
 	int counter;
 	int tcounter;
 	int x;
 	int y;
-
 	int laps;
-
 	int score;
 
 	void checkpointCol();
@@ -91,8 +87,9 @@ private:
 	void startRace();
 
 	Timer t;
-	float timer;
+	
 	float endTime;
+	float rCircle;
 
 protected:
 };
