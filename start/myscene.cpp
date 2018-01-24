@@ -25,6 +25,7 @@ MyScene::MyScene() : Scene()
 	startText = new Text();
 	resetText = new Text();
 	infoText = new Text();
+	lapsText = new Text();
 
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
@@ -33,10 +34,13 @@ MyScene::MyScene() : Scene()
 	endTimerText->scale = Point2(0.5f, 0.5f);
 	resetText->scale = Point2(0.8f, 0.8f);
 	infoText->scale = Point2(0.7f, 0.7f);
+	lapsText->scale = Point2(0.5f, 0.5f);
+
+	player->Reset();
 
 	endTime = 0.0f;
 
-	rCircle = 135.0f;
+	rCircle = 165.0f;
 
 	this->addSprite("assets/background.tga");
 
@@ -66,6 +70,7 @@ MyScene::~MyScene()
 	this->removeChild(menuText);
 	this->removeChild(startText);
 	this->removeChild(infoText);
+	this->removeChild(lapsText);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
@@ -82,6 +87,7 @@ MyScene::~MyScene()
 	delete menuText;
 	delete startText;
 	delete infoText;
+	delete lapsText;
 }
 
 void MyScene::update(float deltaTime)
@@ -94,6 +100,9 @@ void MyScene::update(float deltaTime)
 
 	coinCounter->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 170 - SHEIGHT / 2);
 	coinCounter->message("Coins: " + std::to_string(score) + "/2");
+
+	lapsText->position = Point2(camera()->position.x + 50 - SWIDTH / 2, camera()->position.y + 230 - SHEIGHT / 2);
+	lapsText->message("Laps: " + std::to_string(laps) + "/3");
 
 	forgotCheckpoint->position = Point2(camera()->position.x + 150 - SWIDTH / 2, camera()->position.y + 350 - SHEIGHT / 2);
 
@@ -132,6 +141,8 @@ void MyScene::update(float deltaTime)
 			endText->message("");
 			resetText->message("");
 			deadText->message("");
+
+			player->Reset();
 
 			this->removeChild(player);
 			this->removeChild(enemy);
@@ -346,6 +357,9 @@ void MyScene::finished() {
 				coin->scale = Point2(1.0f, 1.0f);
 				coin2->scale = Point2(1.0f, 1.0f);
 
+				coin->time = 0;
+				coin2->time = 0;
+
 				coinCheck = false;
 
 				finishCheck = false;
@@ -396,7 +410,7 @@ void MyScene::startRace() {
 
 	t.start();
 
-	laps = 0;
+	laps = 1;
 	score = 0;
 
 	this->addChild(player);
@@ -413,10 +427,13 @@ void MyScene::startRace() {
 	this->addChild(menuText);
 	this->addChild(startText);
 	this->addChild(infoText);
+	this->addChild(lapsText);
 
 	menuText->message("Welcome to Car Crash");
 	startText->message("Press enter to start");
 	infoText->message("You can steer with A and D and move with W and S");
+
+	player->rotation = Point2(0.0f, 0.0f, -HALF_PI);
 
 	enemy->direction(Point2(0, -100));
 	enemy->time = 0;
@@ -441,7 +458,6 @@ void MyScene::startRace() {
 	coin2->deleteCoin = false;
 	coin->colCheck = false;
 	coin2->colCheck = false;
-	player->resetVel = true;
 	player->stopMovement = true;
 	enemy->stopEnemyMovement = true;
 	enterCheck = true;
@@ -449,7 +465,10 @@ void MyScene::startRace() {
 	coin->scale = Point2(1.0f, 1.0f);
 	coin2->scale = Point2(1.0f, 1.0f);
 
-	finish = Point2(-1000, 300);
+	coin->time = 0;
+	coin2->time = 0;
+
+	finish = Point2(-1075, 0);
 
 	col = false;
 

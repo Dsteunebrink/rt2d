@@ -8,6 +8,9 @@ Player::Player() : Entity()
 
 	slowDownCheck = true;
 	stopMovement = false;
+
+	velocity = Vector2(0, 0, -HALF_PI);
+	polar = Polar(-90 * DEG_TO_RAD, 400.0f);
 }
 
 
@@ -18,15 +21,6 @@ Player::~Player()
 
 void Player::update(float deltaTime)
 {
-	// ###############################################################
-	// Rotate
-	// ###############################################################
-	static Vector2 velocity = Vector2((rand() % 100) - 50, (rand() % 100) - 50);
-	static Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
-
-	if (resetVel == true) {
-		velocity -= velocity / 1.0f;
-	}
 
 	if (stopMovement == false) {
 		float rotspeed = 3.14f;
@@ -54,7 +48,6 @@ void Player::update(float deltaTime)
 		if (input()->getKey(KeyCode::W)) {
 			if (slowDownCheck == true) {
 				velocity += polar.cartesian() * deltaTime; // thrust
-				resetVel = false;
 			}
 		}
 		else {
@@ -62,15 +55,12 @@ void Player::update(float deltaTime)
 		}
 		if (input()->getKey(KeyCode::D)) {
 			polar.angle += rotspeed * deltaTime; // rotate right
-			resetVel = false;
 		}
 		if (input()->getKey(KeyCode::S)) {
 			velocity -= polar.cartesian() * deltaTime; // brake
-			resetVel = false;
 		}
 		if (input()->getKey(KeyCode::A)) {
 			polar.angle -= rotspeed * deltaTime; // rotate left
-			resetVel = false;
 		}
 
 		this->rotation.z = polar.angle;
@@ -79,4 +69,10 @@ void Player::update(float deltaTime)
 	else {
 		velocity -= velocity / 50.0f;
 	}
+}
+
+void Player::Reset() {
+	this->rotation.z = HALF_PI;
+	polar = Polar(-90 * DEG_TO_RAD, 400.0f);
+	this->velocity = Vector2(0, 0);
 }

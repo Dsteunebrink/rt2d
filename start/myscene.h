@@ -51,6 +51,7 @@ private:
 	Text* menuText;
 	Text* startText;
 	Text* infoText;
+	Text* lapsText;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;

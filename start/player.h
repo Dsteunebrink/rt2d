@@ -26,9 +26,14 @@ public:
 
 	bool velocityCheck;
 	bool stopMovement;
-	bool resetVel;
+
+	void Reset();
 
 private:
+
+	Vector2 velocity;
+	Polar polar;
+
 	bool slowDownCheck;
 };
 
