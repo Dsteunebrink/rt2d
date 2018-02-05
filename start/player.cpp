@@ -40,7 +40,7 @@ void Player::update(float deltaTime)
 			}
 			else {
 				slowDownCheck = true;
-				velocity.limit(100);
+				velocity.limit(150);
 			}
 
 		}

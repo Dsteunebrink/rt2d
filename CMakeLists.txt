@@ -156,10 +156,6 @@ IF(MAKE_START)
 		start/menu.h
 		start/myscene.cpp
 		start/myscene.h
-		start/particle.cpp
-		start/particle.h
-		start/particlesystem.cpp
-		start/particlesystem.h
 		start/player.cpp
 		start/player.h
 	)

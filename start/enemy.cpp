@@ -6,18 +6,21 @@ Enemy::Enemy() : Entity()
 	this->addSprite("assets/enemy_car.tga");
 	this->sprite()->color = RED;
 
+	t.start();
+
 	voidChecker = true;
 
 	stopEnemyMovement = false;
 
 	time = int(0);
 
-	//direction(Point2(0, -100));
+	stopTime = true;
 }
 
 
 Enemy::~Enemy()
 {
+	t.stop();
 }
 
 void Enemy::update(float deltaTime)
@@ -28,177 +31,179 @@ void Enemy::update(float deltaTime)
 		acceleration = Vector2(0, 0);
 	}
 
-	time++;
+	if (stopTime == false) {
+		time++;
+	}
 
-	if (time >= 200 && time <= 300) {
+	if (time >= 300 && time <= 400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-400, -900));
 		}
 	}
-	else if (time >= 950 && time <= 1000) {
+	else if (time >= 1350 && time <= 1400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(50, -900));
 		}
 	}
-	else if (time >= 1500 && time <= 1600) {
+	else if (time >= 1800 && time <= 1900) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(700, -900));
 		}
 	}
-	else if (time >= 1650 && time <= 1750) {
+	else if (time >= 2050 && time <= 2150) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, -300));
 		}
 	}
-	else if (time >= 2100 && time <= 2200) {
+	else if (time >= 2700 && time <= 2800) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, -1));
 		}
 	}
-	else if (time >= 2600 && time <= 2700) {
+	else if (time >= 3100 && time <= 3200) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, 200));
 		}
 	}
-	else if (time >= 2900 && time <= 3000) {
+	else if (time >= 3500 && time <= 3600) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, -150));
 		}
 	}
-	else if (time >= 3450 && time <= 3500) {
+	else if (time >= 4150 && time <= 4200) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(700, 100));
 		}
 	}
-	else if (time >= 3600 && time <= 3700) {
+	else if (time >= 4570 && time <= 4600) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(700, 800));
 		}
 	}
-	else if (time >= 3800 && time <= 3850) {
+	else if (time >= 4700 && time <= 4750) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-100, 300));
 		}
 	}
-	else if (time >= 3900 && time <= 4000) {
+	else if (time >= 4850 && time <= 4900) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-100, 100));
 		}
 	}
-	else if (time >= 4250 && time <= 4350) {
+	else if (time >= 5300 && time <= 5400) {
 		if (voidChecker == true) {
 			voidChecker = false;
-			direction(Point2(-100, 300));
+			direction(Point2(-10, 300));
 		}
 	}
-	else if (time >= 4500 && time <= 4600) {
+	else if (time >= 5900 && time <= 6050) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(200, 900));
 		}
 	}
-	else if (time >= 5050 && time <= 5100) {
+	else if (time >= 6300 && time <= 6400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(400, 400));
 		}
 	}
-	else if (time >= 5250 && time <= 5300) {
+	else if (time >= 6500 && time <= 6600) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, 400));
 		}
 	}
-	else if (time >= 5350 && time <= 5400) {
+	else if (time >= 6650 && time <= 6700) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(900, 100));
 		}
 	}
-	else if (time >= 5800 && time <= 5850) {
+	else if (time >= 7200 && time <= 7300) {
 		if (voidChecker == true){
 			voidChecker = false;
 			direction(Point2(200, 400));
 		}
 	}
-	else if (time >= 5900 && time <= 5950) {
+	else if (time >= 7350 && time <= 7400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-300, 900));
 		}
 	}
-	else if (time >= 6100 && time <= 6200) {
+	else if (time >= 7600 && time <= 7700) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-900, 900));
 		}
 	}
-	else if (time >= 6350 && time <= 6400) {
+	else if (time >= 7850 && time <= 7950) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-700, 400));
 		}
 	}
-	else if (time >= 6800 && time <= 6900) {
+	else if (time >= 8400 && time <= 8500) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-400, 400));
 		}
 	}
-	else if (time >= 7400 && time <= 7500) {
+	else if (time >= 9300 && time <= 9400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-900, 400));
 		}
 	}
-	else if (time >= 7800 && time <= 7900) {
+	else if (time >= 9500 && time <= 9600) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-900, 100));
 		}
 	}
-	else if (time >= 8000 && time <= 8100) {
+	else if (time >= 10200 && time <= 10300) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-900, -100));
 		}
 	}
-	else if (time >= 8400 && time <= 8500) {
+	else if (time >= 10350 && time <= 10400) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-900, -400));
 		}
 	}
-	else if (time >= 8600 && time <= 8650) {
+	else if (time >= 10600 && time <= 10700) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-999, -999));
 		}
 	}
-	else if (time >= 8700 && time <= 8800) {
+	else if (time >= 10900 && time <= 11000) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(-100, -600));
 		}
 	}
-	else if (time >= 9300 && time <= 9400) {
+	else if (time >= 11200 && time <= 11300) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			backToHome();
 		}
 	}
-	else if (time >= 9600 && time <= 9600) {
+	else if (time >= 11780 && time <= 11780) {
 		if (voidChecker == true) {
 			voidChecker = false;
 			direction(Point2(0, -100));
@@ -231,7 +236,7 @@ void Enemy::direction(Point2 checkpoint) {
 		dir *= 40;
 		acceleration = dir;
 		velocity += acceleration;
-		velocity.limit(1);
+		velocity.limit(0.8f);
 		this->rotation.z = velocity.getAngle();
 		acceleration = Vector2(0, 0);
 	}

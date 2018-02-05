@@ -26,6 +26,7 @@ MyScene::MyScene() : Scene()
 	resetText = new Text();
 	infoText = new Text();
 	lapsText = new Text();
+	creditsText = new Text();
 
 	player->scale = Point(2.0f, 2.0f);
 	enemy->scale = Point(2.0f, 2.0f);
@@ -35,6 +36,7 @@ MyScene::MyScene() : Scene()
 	resetText->scale = Point2(0.8f, 0.8f);
 	infoText->scale = Point2(0.7f, 0.7f);
 	lapsText->scale = Point2(0.5f, 0.5f);
+	creditsText->scale = Point2(0.5f, 0.5f);
 
 	player->Reset();
 
@@ -71,6 +73,7 @@ MyScene::~MyScene()
 	this->removeChild(startText);
 	this->removeChild(infoText);
 	this->removeChild(lapsText);
+	this->removeChild(creditsText);
 
 	// delete player, enemy and coin from the heap (there was a 'new' in the constructor)
 	delete player;
@@ -88,6 +91,7 @@ MyScene::~MyScene()
 	delete startText;
 	delete infoText;
 	delete lapsText;
+	delete creditsText;
 }
 
 void MyScene::update(float deltaTime)
@@ -118,6 +122,8 @@ void MyScene::update(float deltaTime)
 
 	infoText->position = Point2(camera()->position.x + 100 - SWIDTH / 2, camera()->position.y + 450 - SHEIGHT / 2);
 
+	creditsText->position = Point2(camera()->position.x + 450 - SWIDTH / 2, camera()->position.y + 650 - SHEIGHT / 2);
+
 	checkpointCol();
 	playerCol();
 	checkpointCheck();
@@ -125,9 +131,12 @@ void MyScene::update(float deltaTime)
 	finished();
 	if (enterCheck = true) {
 		if (input()->getKeyDown(KeyCode::Enter)) {
+			t.start();
+			enemy->stopTime = false;
 			menuText->message("");
 			startText->message("");
 			infoText->message("");
+			creditsText->message("");
 			player->stopMovement = false;
 			enemy->stopEnemyMovement = false;
 			enemy->time = 0;
@@ -236,6 +245,8 @@ void MyScene::playerCol() {
 		this->removeChild(player);
 		this->removeChild(enemy);
 
+		enemy->stopTime = true;
+
 		deadText->message("You have crashed your car");
 		resetText->message("Press space to reset");
 		spaceCheck = true;
@@ -313,6 +324,8 @@ void MyScene::finished() {
 				resetText->message("Press space to reset");
 
 				enemy->direction(Point2(0, -100));
+
+				enemy->stopTime = true;
 
 				player->stopMovement = true;
 				enemy->stopEnemyMovement = true;
@@ -408,7 +421,7 @@ void MyScene::checkpointCheck() {
 
 void MyScene::startRace() {
 
-	t.start();
+	
 
 	laps = 1;
 	score = 0;
@@ -428,10 +441,12 @@ void MyScene::startRace() {
 	this->addChild(startText);
 	this->addChild(infoText);
 	this->addChild(lapsText);
+	this->addChild(creditsText);
 
 	menuText->message("Welcome to Car Crash");
 	startText->message("Press enter to start");
 	infoText->message("You can steer with A and D and move with W and S");
+	creditsText->message("Made by Dani Steunebrink");
 
 	player->rotation = Point2(0.0f, 0.0f, -HALF_PI);
 

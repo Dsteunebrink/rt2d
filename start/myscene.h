@@ -52,6 +52,7 @@ private:
 	Text* startText;
 	Text* infoText;
 	Text* lapsText;
+	Text* creditsText;
 
 	Sprite* background_gray;
 	PixelBuffer* bg_gray;

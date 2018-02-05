@@ -11,6 +11,7 @@
 
 #include <rt2d/entity.h>
 #include <rt2d/line.h>
+#include <rt2d/timer.h>
 
  /// @brief The Enemy class is the Enemy implementation.
 class Enemy : public Entity {
@@ -30,8 +31,11 @@ public:
 	void addForce(Vector3 force);
 
 	bool stopEnemyMovement;
+	bool stopTime;
 
 	int time;
+
+	Timer t;
 
 private:
 	/* add your private declarations */
